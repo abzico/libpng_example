@@ -42,7 +42,7 @@ bool write_ppm_p3_file(const char* file_name, const png_bytepp data, int rowbyte
 	// convert to opaque pointer as we will access arbitrary byte ourselves
 	void** cdata = (void**)data;
 
-	// header of .ppm file
+	// header of .ppm P3 file
 	fprintf(fp, "P3\n%d %d\n%d\n", width, height, 255);
 	for (int y=0; y<height; ++y)
 	{
@@ -61,6 +61,40 @@ bool write_ppm_p3_file(const char* file_name, const png_bytepp data, int rowbyte
 	fp = NULL;
 
 	return true;
+}
+
+bool write_ppm_p6_file(const char* file_name, const png_bytepp data, int rowbytes, int width, int height)
+{	
+  FILE* fp = fopen(file_name, "wb");
+	if (fp == NULL)
+	{
+		fprintf(stderr, "%s file cannot be opened for writing\n", file_name);
+		return false;
+	}
+
+	// convert to opaque pointer as we will access arbitrary byte ourselves
+	void** cdata = (void**)data;
+
+	// header of .ppm P6 file
+	fprintf(fp, "P6\n%d %d\n%d\n", width, height, 255);
+	for (int y=0; y<height; ++y)
+	{
+		for (int x=0; x<width; ++x)
+		{
+			// grab packed color value
+			unsigned int packed_color = *(unsigned int*)(cdata[y] + x*sizeof(unsigned int));
+			// remember handle it in little-endian
+      // png stores image data in MSB (most significant bit or big endian) as well as ppm
+      fprintf(fp, "%c%c%c", packed_color & 0xFF, packed_color >> 8 & 0xFF, packed_color >> 16 & 0xFF);
+		}
+	}
+
+	// close file
+	fclose(fp);
+	fp = NULL;
+
+	return true;
+
 }
 
 png_bytepp read_png_file(const char* file_name, int* rst_rowbytes, int* rst_width, int* rst_height)
@@ -253,14 +287,26 @@ int main (int argc, char* argv[])
 	// read image file
 	png_bytepp image_data = read_png_file("opaque.png", &rowbytes, &width, &height);
 	// prove of concept, write into .ppm (P3) file
-	const char* output_file = "opaque.ppm";
-	if (!write_ppm_p3_file(output_file, image_data, rowbytes, width, height))
+	const char* output_p3_file = "opaque-p3.ppm";
+	const char* output_p6_file = "opaque-p6.ppm";
+  // P3 format
+	if (!write_ppm_p3_file(output_p3_file, image_data, rowbytes, width, height))
 	{
-		fprintf(stderr, "error writing into .ppm file\n");
+		fprintf(stderr, "error writing into .ppm (P3 format) file\n");
 	}
 	else
 	{
-		fprintf(stdout, "Check output %s file\n", output_file);
+		fprintf(stdout, "Check output %s file\n", output_p3_file);
+	}
+
+  // P6 format
+	if (!write_ppm_p6_file(output_p6_file, image_data, rowbytes, width, height))
+	{
+		fprintf(stderr, "error writing into .ppm (P6 format) file\n");
+	}
+	else
+	{
+		fprintf(stdout, "Check output %s file\n", output_p6_file);
 	}
 
 	// done with it, free image data memory space

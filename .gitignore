@@ -52,7 +52,8 @@ Mkfile.old
 dkms.conf
 
 # generated image file from program
-opaque.ppm
+opaque-p3.ppm
+opaque-p6.ppm
 opaque.png
 trans.png
 test-libpng
