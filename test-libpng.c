@@ -3,17 +3,14 @@
 ///
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdarg.h>
+#include "test-libpng.h"
 
 // define debugging information to spit out from libpng
 // higher number, more info out
 // valid value is 0 to 3
 #define PNG_DEBUG 3
-#include <png.h>
 
-static void abort_(const char* s, ...)
+void abort_(const char* s, ...)
 {
   va_list args;
   va_start(args, s);
@@ -23,8 +20,7 @@ static void abort_(const char* s, ...)
   abort();
 }
 
-/// free image data pointer
-static void free_image_data(png_bytepp data, int height)
+void free_image_data(png_bytepp data, int height)
 {
 	for (int y=0; y<height; ++y)
 	{
@@ -34,11 +30,7 @@ static void free_image_data(png_bytepp data, int height)
 	free(data);
 }
 
-/// write into .ppm file as P3 format (see http://netpbm.sourceforge.net/doc/ppm.html)
-/// take image data `data` then write into .tga file `file_name`
-/// return true for success, false otherwise.
-/// note: used for testing with png with fully opaque, if such image has transparency it might have weird result
-static bool write_ppm_file(const char* file_name, const png_bytepp data, int rowbytes, int width, int height)
+bool write_ppm_p3_file(const char* file_name, const png_bytepp data, int rowbytes, int width, int height)
 {
 	FILE* fp = fopen(file_name, "wb");
 	if (fp == NULL)
@@ -71,17 +63,7 @@ static bool write_ppm_file(const char* file_name, const png_bytepp data, int row
 	return true;
 }
 
-///
-/// read png file both for its info, and image data, then return image data out via `read_image_data`
-/// returned pointer to image data needs to be freed with free_image_data() function.
-///
-/// \param file_name image file name to read
-/// \param rst_rowbytes to be filled in for image's total bytes in each row
-/// \param rst_width to be filled in for image's width
-/// \param rst_height to be filled in for image's height
-/// \return pointer to image's data if successfully read, otherwise NULL is returned.
-///
-static png_bytepp read_png_file(const char* file_name, int* rst_rowbytes, int* rst_width, int* rst_height)
+png_bytepp read_png_file(const char* file_name, int* rst_rowbytes, int* rst_width, int* rst_height)
 {
 	// to hold first 8 bytes reading from png file to check if it's png file
   unsigned char header[8];
@@ -272,7 +254,7 @@ int main (int argc, char* argv[])
 	png_bytepp image_data = read_png_file("opaque.png", &rowbytes, &width, &height);
 	// prove of concept, write into .ppm (P3) file
 	const char* output_file = "opaque.ppm";
-	if (!write_ppm_file(output_file, image_data, rowbytes, width, height))
+	if (!write_ppm_p3_file(output_file, image_data, rowbytes, width, height))
 	{
 		fprintf(stderr, "error writing into .ppm file\n");
 	}

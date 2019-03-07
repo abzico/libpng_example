@@ -1,6 +1,6 @@
 CC := gcc
 OUT := test-libpng
-CFLAGS = -std=c99
+CFLAGS = -std=c99 -Wall -I.
 LFLAGS = -lpng
 
 DEPS := \
