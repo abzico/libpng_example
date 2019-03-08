@@ -377,6 +377,80 @@ bool write_png_file(const char* file_name, const png_bytepp data, int width, int
 	return true;
 }
 
+png_bytepp generate_color_image(int width, int height, unsigned char r, unsigned char g, unsigned char b)
+{
+  // generate RGBA pixel format
+  const int rowbytes = width * 4;
+
+	png_bytepp row_ptr = (png_bytepp)malloc(sizeof(png_bytep) * height);
+	for (int y=0; y<height; ++y)
+	{
+		row_ptr[y] = (png_bytep)malloc(rowbytes);
+	}
+
+  for (int y=0; y<height; ++y)
+  {
+    png_bytep row = row_ptr[y];
+
+    for (int x=0; x<width; ++x)
+    {
+      png_bytep p = &row[x*4];
+      p[0] = r;
+      p[1] = g;
+      p[2] = b;
+      p[3] = 0xFF;
+    }
+  }
+
+  return row_ptr;
+}
+
+png_bytepp generate_color_imagea(int width, int height, int margin, unsigned char r, unsigned char g, unsigned char b)
+{
+  // generate RGBA pixel format
+  const int rowbytes = width * 4;
+
+	png_bytepp row_ptr = (png_bytepp)malloc(sizeof(png_bytep) * height);
+	for (int y=0; y<height; ++y)
+	{
+		row_ptr[y] = (png_bytep)malloc(rowbytes);
+	}
+
+  for (int y=0; y<height; ++y)
+  {
+    png_bytep row = row_ptr[y];
+
+    if (y < margin || y >= height-margin-1)
+    {
+      for (int x=0; x<width; ++x)
+      {
+        png_bytep p = &row[x*4];
+        p[0] = r;
+        p[1] = g;
+        p[2] = b;
+        p[3] = 0x00;
+      }
+    }
+    else
+    {
+      for (int x=0; x<width; ++x)
+      {
+        png_bytep p = &row[x*4];
+        p[0] = r;
+        p[1] = g;
+        p[2] = b;
+
+        if (x < margin || x >= width-margin-1)
+          p[3] = 0x00;
+        else
+          p[3] = 0xFF;
+      }
+    }
+  }
+
+  return row_ptr;
+}
+
 int main (int argc, char* argv[])
 {
 	int width = 0, height = 0;
@@ -435,6 +509,40 @@ int main (int argc, char* argv[])
   else
   {
     fprintf(stdout, "Check output %s file\n", output_pngtrans_file);
+  }
+
+	// done with it, free image data memory space
+	free_image_data(image_data, height);
+  // reset values
+  width = 0;
+  height = 0;
+  rowbytes = 0;
+
+  // Make custom image data then Write into png file (without transparency)
+  image_data = generate_color_image(256, 256, 0x00, 0x00, 0xFF);
+  const char* output_pngmanual_file = "manual-png.png";
+  if (!write_png_file(output_pngmanual_file, image_data, 256, 256))
+  {
+    fprintf(stderr, "error writing into .png file\n");
+  }
+  else
+  {
+    fprintf(stdout, "Check output %s file\n", output_pngmanual_file);
+  }
+
+	// done with it, free image data memory space
+	free_image_data(image_data, height);
+
+  // Make custom image data then Write into png file (without transparency)
+  image_data = generate_color_imagea(256, 256, 32, 0xFF, 0xFF, 0x00);
+  const char* output_pngmanual2_file = "manual-png2.png";
+  if (!write_png_file(output_pngmanual2_file, image_data, 256, 256))
+  {
+    fprintf(stderr, "error writing into .png file\n");
+  }
+  else
+  {
+    fprintf(stdout, "Check output %s file\n", output_pngmanual2_file);
   }
 
 	// done with it, free image data memory space

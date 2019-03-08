@@ -51,7 +51,7 @@ extern bool write_ppm_p3_file(const char* file_name, const png_bytepp data, int 
 extern bool write_ppm_p6_file(const char* file_name, const png_bytepp data, int rowbytes, int width, int height);
 
 ///
-/// read png file both for its info, and image data, then return image data out via `read_image_data`
+/// read png (RGBA format) file both for its info, and image data, then return image data out via `read_image_data`
 /// returned pointer to image data needs to be freed with free_image_data() function.
 ///
 /// \param file_name image file name to read
@@ -63,7 +63,7 @@ extern bool write_ppm_p6_file(const char* file_name, const png_bytepp data, int 
 extern png_bytepp read_png_file(const char* file_name, int* rst_rowbytes, int* rst_width, int* rst_height);
 
 ///
-/// write png file into output `file_name`.
+/// write png (RGBA format) file into output `file_name`.
 ///
 /// \param file_name output file name to write into
 /// \param data image data
@@ -72,5 +72,31 @@ extern png_bytepp read_png_file(const char* file_name, int* rst_rowbytes, int* r
 /// \return true if writing is successful, otherwise return false
 ///
 extern bool write_png_file(const char* file_name, const png_bytepp data, int width, int height);
+
+///
+/// generate colored image data in RGBA format with specified color for all pixel as width x height image but alpha is 0xFF.
+///
+/// \param width width of image data to generate
+/// \param height height of image data to generate
+/// \param r red color component value
+/// \param g green color component value
+/// \param b blue color component value
+/// \return image data
+///
+extern png_bytepp generate_color_image(int width, int height, unsigned char r, unsigned char g, unsigned char b);
+
+///
+/// generate colored image data in RGBA format with specified color for all pixel as width x height image; with margin as size to
+/// render as full transparent.
+///
+/// \param width width of image data to generate
+/// \param height height of image data to generate
+/// \param margin margin to render as full transparent around the edge of the image
+/// \param r red color component value
+/// \param g green color component value
+/// \param b blue color component value
+/// \return image data
+///
+extern png_bytepp generate_color_imagea(int width, int height, int margin, unsigned char r, unsigned char g, unsigned char b);
 
 #endif

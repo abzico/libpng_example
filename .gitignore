@@ -58,5 +58,7 @@ opaque-png.png
 opaque.png
 trans.png
 trans-png.png
+manual-png.png
+manual-png2.png
 test-libpng
 *.sw*

@@ -16,8 +16,9 @@ Also it will read `trans.png` then use that image data to write into `trans-png.
 
 There are 2 input images used
 
-1. `opague.png`
-2. `trans.png`
+1. `opague.png` - program will produce `opaque-p3.png`, `opaque-p6.png`, `opaque-png.png`
+2. `trans.png` - program will produce `trans-png.png`
+3. manual - program will produce `manual-png.png` and `manual-png2.png`. The former with full image opaque color, but the latter has edage with size 32 pixels around the image as full transparent leaving the center as opaque color.
 
 # License
 MIT, ABZI (abzi.co)
