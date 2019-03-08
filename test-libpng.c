@@ -1,6 +1,7 @@
-/// libpng demo
-/// Wasin Thonkaew, abzi.co
-///
+/*
+ * libpng example
+ * abzi.co
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include "test-libpng.h"
