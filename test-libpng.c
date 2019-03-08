@@ -284,12 +284,104 @@ png_bytepp read_png_file(const char* file_name, int* rst_rowbytes, int* rst_widt
 	return row_ptr;
 }
 
+bool write_png_file(const char* file_name, const png_bytepp data, int width, int height)
+{	
+	// open file
+	// note: libpng tells us to make sure we open in binary mode
+  FILE *fp = fopen(file_name, "wb");
+  if (fp == NULL)
+    abort_("%s file cannot be opened for reading", file_name);
+  
+	// create png structure
+	png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	if (png_ptr == NULL)
+	{
+		// cannot create png structure
+		fprintf(stderr, "cannot create png structure\n");
+
+		// close file
+		fclose(fp);
+		fp = NULL;
+		return false;
+	}
+
+	// create png-info structure
+	png_infop info_ptr = png_create_info_struct(png_ptr);
+	if (info_ptr == NULL)
+	{
+		fprintf(stderr, "cannot create png info structure\n");
+
+		// clear png resource
+		png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
+		
+		// close file
+		fclose(fp);
+		fp = NULL;
+		return false;
+	}
+
+  // we need to set jump callback to handle error when we enter into a new routing before the call to png_*()
+  // defined as convenient for future if you every call this in different routine
+  // note: if use, need to call in routine that return bool type indicating the result of operation
+#define PNG_WRITE_SETJMP(png_ptr, info_ptr, fp) \
+	/* set jmp */  \
+	if (setjmp(png_jmpbuf(png_ptr)))  \
+	{ \
+		fprintf(stderr, "error png's set jmp for write\n"); \
+                                              \
+		/* clear png resource */                  \
+		png_destroy_write_struct(&png_ptr, &info_ptr);   \
+                                                                      \
+		/* close file */ \
+		fclose(fp);     \
+		fp = NULL;      \
+		return false;    \
+	}
+
+  // call this once as all relevant operations all happen in just one routine
+  PNG_WRITE_SETJMP(png_ptr, info_ptr, fp)
+
+	// set up input code
+	png_init_io(png_ptr, fp);
+
+  // set important parts of png_info first
+  png_set_IHDR(png_ptr,
+      info_ptr,
+      width,
+      height,
+      8,
+      PNG_COLOR_TYPE_RGB_ALPHA,
+      PNG_INTERLACE_NONE,
+      PNG_COMPRESSION_TYPE_DEFAULT, 
+      PNG_FILTER_TYPE_DEFAULT);
+  // <... add any png_set_*() function in any order if need here
+
+  // ready to write info we've set before actual image data
+  png_write_info(png_ptr, info_ptr);
+
+  // now it's time to write actual image data
+  png_write_image(png_ptr, data);
+
+  // done writing image
+  // pass NULL as we don't need to write any set data i.e. comment
+  png_write_end(png_ptr, NULL);
+
+	// clear png resource
+	png_destroy_write_struct(&png_ptr, &info_ptr);
+
+	// close file
+	fclose(fp);
+	fp = NULL;
+
+	return true;
+}
+
 int main (int argc, char* argv[])
 {
 	int width = 0, height = 0;
 	int rowbytes = 0;
 
-	// read image file
+	/* Read png file */
 	png_bytepp image_data = read_png_file("opaque.png", &rowbytes, &width, &height);
 	// prove of concept, write into .ppm (P3) file
 	const char* output_p3_file = "opaque-p3.ppm";
@@ -313,6 +405,17 @@ int main (int argc, char* argv[])
 	{
 		fprintf(stdout, "Check output %s file\n", output_p6_file);
 	}
+
+  /* Write png file */
+  const char* output_png_file = "opaque-png.png";
+  if (!write_png_file(output_png_file, image_data, width, height))
+  {
+    fprintf(stderr, "error writing into .png file\n");
+  }
+  else
+  {
+    fprintf(stdout, "Check output %s file\n", output_png_file);
+  }
 
 	// done with it, free image data memory space
 	free_image_data(image_data, height);

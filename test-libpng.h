@@ -62,4 +62,15 @@ extern bool write_ppm_p6_file(const char* file_name, const png_bytepp data, int 
 ///
 extern png_bytepp read_png_file(const char* file_name, int* rst_rowbytes, int* rst_width, int* rst_height);
 
+///
+/// write png file into output `file_name`.
+///
+/// \param file_name output file name to write into
+/// \param data image data
+/// \param width width of image
+/// \param height height of image
+/// \return true if writing is successful, otherwise return false
+///
+extern bool write_png_file(const char* file_name, const png_bytepp data, int width, int height);
+
 #endif
