@@ -12,6 +12,11 @@ Run it, the program will read input png file `opaque.png` as well as its info he
 
 Also it will read `trans.png` then use that image data to write into `trans-png.png`. So you should verify that all produced image should have correct visual.
 
+# What I will get from this project?
+
+* How to work with libpng to read/write and process (generate by hand) image data to produce .png image
+* How to write into .ppm both P3 and P6 format (for purpose of prove of concept reading image data from .png file)
+
 # Note
 
 There are 2 input images used
@@ -19,6 +24,8 @@ There are 2 input images used
 1. `opague.png` - program will produce `opaque-p3.png`, `opaque-p6.png`, `opaque-png.png`
 2. `trans.png` - program will produce `trans-png.png`
 3. manual - program will produce `manual-png.png` and `manual-png2.png`. The former with full image opaque color, but the latter has edage with size 32 pixels around the image as full transparent leaving the center as opaque color.
+
+PS. Tested on macOS, for Windows, should need a little bit more effort to make a proper build script.
 
 ![image reference overview](https://github.com/abzico/libpng_example/blob/master/libpng_example_layout.png)
 
