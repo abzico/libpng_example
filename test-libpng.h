@@ -78,9 +78,9 @@ extern bool write_png_file(const char* file_name, const png_bytepp data, int wid
 ///
 /// \param width width of image data to generate
 /// \param height height of image data to generate
-/// \param r red color component value
-/// \param g green color component value
-/// \param b blue color component value
+/// \param r red color component value. Possible value is 0-255.
+/// \param g green color component value. Possible value is 0-255.
+/// \param b blue color component value. Possible value is 0-255.
 /// \return image data
 ///
 extern png_bytepp generate_color_image(int width, int height, unsigned char r, unsigned char g, unsigned char b);
@@ -92,9 +92,9 @@ extern png_bytepp generate_color_image(int width, int height, unsigned char r, u
 /// \param width width of image data to generate
 /// \param height height of image data to generate
 /// \param margin margin to render as full transparent around the edge of the image
-/// \param r red color component value
-/// \param g green color component value
-/// \param b blue color component value
+/// \param r red color component value. Possible value is 0-255.
+/// \param g green color component value. Possible value is 0-255.
+/// \param b blue color component value. Possible value is 0-255.
 /// \return image data
 ///
 extern png_bytepp generate_color_imagea(int width, int height, int margin, unsigned char r, unsigned char g, unsigned char b);
