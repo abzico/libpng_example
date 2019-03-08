@@ -20,5 +20,7 @@ There are 2 input images used
 2. `trans.png` - program will produce `trans-png.png`
 3. manual - program will produce `manual-png.png` and `manual-png2.png`. The former with full image opaque color, but the latter has edage with size 32 pixels around the image as full transparent leaving the center as opaque color.
 
+![image reference overview](https://github.com/abzico/libpng_example/blob/master/libpng_example_layout.png)
+
 # License
 MIT, ABZI (abzi.co)
