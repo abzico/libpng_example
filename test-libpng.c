@@ -162,19 +162,26 @@ png_bytepp read_png_file(const char* file_name, int* rst_rowbytes, int* rst_widt
 		return NULL;
 	}
 
-	// set jmp
-	if (setjmp(png_jmpbuf(png_ptr)))
-	{
-		fprintf(stderr, "error png's set jmp\n");
-
-		// clear png resource
-		png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
-
-		// close file
-		fclose(fp);
-		fp = NULL;
-		return NULL;
+  // we need to set jump callback to handle error when we enter into a new routing before the call to png_*()
+  // defined as convenient for future if you every call this in different routine
+  // note: if use, need to call in routine that return any pointer type
+#define PNG_READ_SETJMP(png_ptr, info_ptr, fp) \
+	/* set jmp */ \
+	if (setjmp(png_jmpbuf(png_ptr)))  \
+	{ \
+		fprintf(stderr, "error png's set jmp for read\n"); \
+                                              \
+		/* clear png resource */                  \
+		png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);   \
+                                                                      \
+		/* close file */ \
+		fclose(fp);     \
+		fp = NULL;      \
+		return NULL;    \
 	}
+
+  // call this once as all relevant operations all happen in just one routine
+  PNG_READ_SETJMP(png_ptr, info_ptr, fp)
 
 	// set up input code
 	png_init_io(png_ptr, fp);
