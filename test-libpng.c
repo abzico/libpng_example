@@ -420,6 +420,25 @@ int main (int argc, char* argv[])
 
 	// done with it, free image data memory space
 	free_image_data(image_data, height);
+  // reset values
+  width = 0;
+  height = 0;
+  rowbytes = 0;
+
+  // Read & Write png file - trans.png
+  image_data = read_png_file("trans.png", &rowbytes, &width, &height);
+  const char* output_pngtrans_file = "trans-png.png";
+  if (!write_png_file(output_pngtrans_file, image_data, width, height))
+  {
+    fprintf(stderr, "error writing into .png file\n");
+  }
+  else
+  {
+    fprintf(stdout, "Check output %s file\n", output_pngtrans_file);
+  }
+
+	// done with it, free image data memory space
+	free_image_data(image_data, height);
 	image_data = NULL;
 
 	return 0;

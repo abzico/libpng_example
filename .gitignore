@@ -57,5 +57,6 @@ opaque-p6.ppm
 opaque-png.png
 opaque.png
 trans.png
+trans-png.png
 test-libpng
 *.sw*
