@@ -168,7 +168,6 @@ png_bytepp read_png_file(const char* file_name, int* rst_rowbytes, int* rst_widt
 		fprintf(stderr, "error png's set jmp\n");
 
 		// clear png resource
-		png_destroy_info_struct(png_ptr, &info_ptr);
 		png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
 
 		// close file
@@ -255,7 +254,6 @@ png_bytepp read_png_file(const char* file_name, int* rst_rowbytes, int* rst_widt
 	png_read_image(png_ptr, row_ptr);
 
 	// clear png resource
-	png_destroy_info_struct(png_ptr, &info_ptr);
 	png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
 
 	// close file
