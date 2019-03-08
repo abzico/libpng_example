@@ -16,3 +16,9 @@ test-libpng.o: test-libpng.c
 clean:
 	rm -f *.o
 	rm -f $(OUT)
+	rm -f opaque-p3.ppm
+	rm -f opaque-p6.ppm
+	rm -f opaque-png.png
+	rm -f trans-png.png
+	rm -f manual-png.png
+	rm -f manual-png2.png
