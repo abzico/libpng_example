@@ -30,7 +30,7 @@ Program demonstrate the following points
 
 # Note
 
-There are 2 input images used
+There are 2 input images used and 1 manual operation to generate output image
 
 1. `opague.png` - program will produce `opaque-p3.png`, `opaque-p6.png`, `opaque-png.png`
 2. `trans.png` - program will produce `trans-png.png`
